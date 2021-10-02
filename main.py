@@ -10,9 +10,12 @@ class color:
 
 lines = [[" "," "," "," "," "," "," "],[" "," "," "," "," "," "," "],[" "," "," "," "," "," "," "],[" "," "," "," "," "," "," "],[" "," "," "," "," "," "," "],[" "," "," "," "," "," "," "]]
 
+player1 = {"token":"X", "color":color.YELLOW}
+player2 = {"token":"Y", "color":color.RED}
+
 print("Bonjour et bienvenue sur ce puissance 4")
-player1 = input(f"Choisissez le nom du premier joueur ({color.YELLOW}X{color.END}) : ")
-player2 = input(f"Choisissez le nom du deuxième joueur ({color.RED}O{color.END}): ")
+player1["name"] = input(f"Choisissez le nom du premier joueur ({player1.get('color') + player1.get('token') + color.END}) : ")
+player2["name"] = input(f"Choisissez le nom du deuxième joueur ({player2.get('color') + player2.get('token') + color.END}): ")
 
 os.system("clear")
 def display_gameboard(color, lines):
@@ -20,10 +23,10 @@ def display_gameboard(color, lines):
     for line in enumerate(reversed(lines)):
         output+="|"
         for columns in line[1]:
-            if columns == "X":
-                output+=f" {color.YELLOW + columns + color.END} |"
-            elif columns == "O":
-                output+=f" {color.RED + columns + color.END} |"
+            if columns == player1.get('token'):
+                output+=f" {player1.get('color') + columns + color.END} |"
+            elif columns == player2.get('token'):
+                output+=f" {player2.get('color') + columns + color.END} |"
             else:
                 output+=f" {columns} |"
         output+="\n"
@@ -34,8 +37,7 @@ def display_gameboard(color, lines):
 
 
 def prompt_player(lines, player, token):
-    playerColor= color.YELLOW if token == "X" else color.RED
-    print(f"Ok, {playerColor + player + color.END} C'est votre tour, choisissez dans quelle colonne vous souhaitez mettre le jeton")
+    print(f"Ok, {player.get('color') + player.get('name') + color.END} C'est votre tour, choisissez dans quelle colonne vous souhaitez mettre le jeton")
     inputValue = input("Colonne # : ")
     validationRegexp = re.compile("^[1-7]$")
     while not validationRegexp.match(inputValue):
@@ -49,15 +51,14 @@ def prompt_player(lines, player, token):
             line[column] = token
             break
 
+def player_turn(color, lines, player, display_gameboard, prompt_player):
+    display_gameboard(color, lines)
+
+    prompt_player(lines, player, player.get('token'))
+
+    os.system("clear")
+
 while True:
-    display_gameboard(color, lines)
+    player_turn(color, lines, player1, display_gameboard, prompt_player)
 
-    prompt_player(lines, player1, "X")
-
-    os.system("clear")
-
-    display_gameboard(color, lines)
-
-    prompt_player(lines, player2, "O")
-
-    os.system("clear")
+    player_turn(color, lines, player2, display_gameboard, prompt_player)
